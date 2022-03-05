@@ -9,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.nio.Buffer;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -18,6 +19,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class NetworkManager {
     private Socket clientSocket;
+    private DataOutputStream outToServer;
+    private BufferedReader inputFromServer;
 
     public NetworkManager() {
 
@@ -34,6 +37,12 @@ public class NetworkManager {
             public void onNext(Socket s) {
                 Log.d("NETMANAGER", "Initialized connection successfully");
                 clientSocket = s;
+                try {
+                    outToServer = new DataOutputStream(s.getOutputStream());
+                    inputFromServer = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 executeCommunication(matNum)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -51,7 +60,7 @@ public class NetworkManager {
         };
     }
 
-    private Observer executionObserver(TextView result) {
+    public Observer executionObserver(TextView result) {
         return new Observer<String>() {
             @Override
             public void onSubscribe(Disposable d) {
@@ -103,7 +112,6 @@ public class NetworkManager {
                     Log.i("NETMANAGER", "Received answer");
                     observer.onNext(answer);
                 } catch (IOException e) {
-                    e.printStackTrace();
                     observer.onError(e);
                 } finally {
                     observer.onComplete();
@@ -114,20 +122,8 @@ public class NetworkManager {
 
     public String sendAndRetrieveAnswer(String matNum) throws IOException {
         Log.i("NM", "Sending message...");
-        sendToServer(matNum);
+        outToServer.writeBytes(matNum + "\n");
         Log.i("NM", "Message send. Waiting for answer...");
-        return waitForServerResponse();
-    }
-
-    private void sendToServer(String message) throws IOException {
-        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-
-        outToServer.writeBytes(message + "\n");
-    }
-
-    private String waitForServerResponse() throws IOException {
-        BufferedReader inputFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
         return inputFromServer.readLine();
     }
 }
