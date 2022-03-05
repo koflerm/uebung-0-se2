@@ -43,7 +43,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickQuersumme(View view) {
-        TextView result = (TextView) findViewById(R.id.textView2);
-        result.setText("Test");
+        EditText input = (EditText) findViewById(R.id.editTextMatrikelnummer);
+        TextView resultView = (TextView) findViewById(R.id.textView2);
+        String matNumText = input.getText().toString();
+        Integer matNum;
+
+        try {
+            matNum = Integer.parseInt(matNumText);
+            Integer sum = Ex2Calculator.calculateQuersumme(matNum);
+            String binarySum = Ex2Calculator.calculateQuersummeAndReturnBinary(matNum);
+            resultView.setText("Result: " + sum + " Binary: " + binarySum);
+
+        } catch (NumberFormatException nfe) {
+            resultView.setText("Invalid Matrikelnummer");
+        }
     }
 }
