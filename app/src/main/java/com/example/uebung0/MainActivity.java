@@ -41,4 +41,9 @@ public class MainActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(networkManager.initObserver(matNum, result));
     }
+
+    public void onClickQuersumme(View view) {
+        TextView result = (TextView) findViewById(R.id.textView2);
+        result.setText("Test");
+    }
 }

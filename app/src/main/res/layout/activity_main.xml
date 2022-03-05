@@ -55,6 +55,7 @@
                 android:id="@+id/buttonQuersumme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:onClick="onClickQuersumme"
                 android:text="Quersumme berechnen" />
 
         </LinearLayout>
