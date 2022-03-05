@@ -51,6 +51,12 @@
                 android:onClick="onClickSend"
                 android:text="ABSCHICKEN" />
 
+            <Button
+                android:id="@+id/buttonQuersumme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Quersumme berechnen" />
+
         </LinearLayout>
     </LinearLayout>
 
