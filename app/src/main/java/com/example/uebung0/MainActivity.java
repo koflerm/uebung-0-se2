@@ -30,16 +30,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickSend(View view) throws IOException {
-        Context c = this;
         EditText input = (EditText) findViewById(R.id.editTextMatrikelnummer);
-        TextView result = (TextView) findViewById(R.id.textView2);
-        String matNum = input.getText().toString();
-        NetworkManager networkManager = new NetworkManager();
+        TextView resultView = (TextView) findViewById(R.id.textView2);
+        String matNumText = input.getText().toString();
+        if (matNumIsNumeric(matNumText)) {
+            NetworkManager networkManager = new NetworkManager();
 
-        networkManager.initializeConnection()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(networkManager.initObserver(matNum, result));
+            networkManager.initializeConnection()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(networkManager.initObserver(matNumText, resultView));
+        } else {
+            resultView.setText("Matrikelnummer muss eine Zahl sein!");
+        }
     }
 
     public void onClickQuersumme(View view) {
@@ -48,14 +51,24 @@ public class MainActivity extends AppCompatActivity {
         String matNumText = input.getText().toString();
         Integer matNum;
 
-        try {
+        if (matNumIsNumeric(matNumText)) {
             matNum = Integer.parseInt(matNumText);
             Integer sum = Ex2Calculator.calculateQuersumme(matNum);
             String binarySum = Ex2Calculator.calculateQuersummeAndReturnBinary(matNum);
             resultView.setText("Result: " + sum + " Binary: " + binarySum);
-
-        } catch (NumberFormatException nfe) {
-            resultView.setText("Invalid Matrikelnummer");
+        } else {
+            resultView.setText("Matrikelnummer muss eine Zahl sein!");
         }
+    }
+
+    private boolean matNumIsNumeric(String matNum) {
+        boolean isNumeric;
+        try {
+            int num = Integer.parseInt(matNum);
+            isNumeric = true;
+        } catch (NumberFormatException nfe) {
+            isNumeric = false;
+        }
+        return isNumeric;
     }
 }
